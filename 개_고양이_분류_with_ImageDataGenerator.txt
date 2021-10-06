@@ -1,0 +1,138 @@
+# !wget --no-check-certificate \
+# https://storage.googleapis.com/mledu-datasets/cats_and_dogs_filtered.zip \
+# -O /content/drive/MyDrive/CNN_Study/Dogs_Cats/Datasets1/cats_and_dogs_filtered.zip 
+
+import os
+# import zipfile
+
+# local_zip = '/content/drive/MyDrive/CNN_Study/Dogs_Cats/Datasets_50MB/cats_and_dogs_filtered.zip'
+
+# zip_ref = zipfile.ZipFile(local_zip, 'r')
+
+# zip_ref.extractall('/content/drive/MyDrive/CNN_Study/Dogs_Cats/Datasets_50MB/')
+# zip_ref.close()
+
+base_dir = '/content/drive/MyDrive/CNN_Study/Dogs_Cats/Datasets_50MB/cats_and_dogs_filtered'
+
+train_dir = os.path.join(base_dir, 'train')
+validation_dir = os.path.join(base_dir, 'validation')
+
+train_cats_dir = os.path.join(train_dir, 'cats')
+train_dogs_dir = os.path.join(train_dir, 'dogs')
+validation_cats_dir = os.path.join(validation_dir, 'cats')
+validation_dogs_dir = os.path.join(validation_dir, 'dogs')
+
+train_cats_list = os.listdir(train_cats_dir)
+train_dogs_list = os.listdir(train_dogs_dir)
+
+print(len(train_cats_list), len(train_dogs_list))
+
+import matplotlib.image as mpimg
+import matplotlib.pyplot as plt
+
+nrows, ncols = 4, 5
+
+figure = plt.figure(figsize=(15, 15))
+
+sample_picture_cats_path = []
+sample_picture_dogs_path = []
+
+for filename in train_cats_list[:10]:
+  sample_picture_cats_path.append( os.path.join(train_cats_dir, filename) )
+
+for filename in train_dogs_list[:10]:
+  sample_picture_dogs_path.append( os.path.join(train_dogs_dir, filename) )
+
+
+for i, sampleimg_path in enumerate(sample_picture_cats_path+sample_picture_dogs_path):
+  plt.subplot(nrows, ncols, i + 1)
+
+  img = mpimg.imread(sampleimg_path)
+  plt.imshow(img)
+
+plt.show()
+
+import tensorflow as tf
+
+model = tf.keras.Sequential([
+                             tf.keras.layers.Conv2D(16, (3, 3), activation='relu', input_shape=(150, 150, 3)),
+                             tf.keras.layers.MaxPooling2D(2, 2), # (64, 64, 16)
+                             tf.keras.layers.Conv2D(32, (3, 3), activation='relu'),
+                             tf.keras.layers.MaxPooling2D(2, 2),
+                             tf.keras.layers.Conv2D(64, (3, 3), activation='relu'),
+                             tf.keras.layers.MaxPooling2D(2, 2),
+                             tf.keras.layers.Flatten(),
+                             tf.keras.layers.Dense(512, activation='relu'),
+                             tf.keras.layers.Dense(1, activation='sigmoid')
+])
+
+model.summary()
+
+
+from tensorflow.keras.optimizers import RMSprop
+
+# optimizer 종류
+# SGD('sgd')
+# RMSprop : 훈련 과정 중에 학습률을 적절하게 변경함
+# Adam , Adagrad : https://huangdi.tistory.com/7
+# Adadelta
+# Adamax
+# Nadmax
+# Ftrl
+# ** 참고 사이트 : https://keras.io/ko/optimizers/
+
+# loss(손실함수)
+# 회귀문제 : MSE(mean_squared_error)
+# 이진 분류 - Sigmoid
+# 다중 클래스 분류 - Softmax
+# 1) categorical_crossentropy(범주형 교차 엔트로피)
+# 2) sparse_categorical_crossentropy 
+#	: 범주형 교차 엔트로피와 동일하지만 이 경우 One-Hot encoding 상태일 필요없이 정수 encoding 상태에서 수행 가능
+# Cross Entropy 란? : 
+model.compile(optimizer=RMSprop(learning_rate=0.001),
+              loss='binary_crossentropy',
+              metrics = ['acc']
+)
+
+# metrics : 훈련 과정을 모니터링하기 위한 지표
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+
+# ImageDataGenerator 속성
+# rescale : 원래 이미지에 입력된 값만큼 이미지의 크기에 곱해서 조율 -> 값의 크기를 줄이기 위함으로 보임 [1./255]
+# rotation_range : 지정된 각도 범위에서 임의로 원본 이미지를 회전 [0 ~ 100]
+# width_shift_range / height_shift_range : 정된 수평/수직 방향 내에서 임의로 원본 이미지를 좌우로 이동 [0 ~ 1]
+# brightness_range : 이미지 밝기를 랜덤하게 주는 것 [0~1, 0~1]
+# horizontal_flip : 수평방향으로 뒤집기 [True / False]
+# validation_split : 주어진 데이터셋을 test와 training으로 나누는 비율 [0 ~ 1]
+# shear_range : 이미지를 잘라내는 정도 [0 ~ 1]
+# zoom_range : 확대 축소 정도 [0 ~ 1]
+train_datagen = ImageDataGenerator( rescale = 1.0/255.)
+validation_datagen = ImageDataGenerator( rescale = 1.0/255. ) 
+
+# flow_from_directory method : 사용할 이미지 데이터를 폴더 형태의 데이터로 가져옴
+# 속성
+# 첫 인자 값 : 데이터의 경로
+# - 설명 : '/content/drive/MyDrive/CNN_Study/Dogs_Cats/Datasets_50MB/cats_and_dogs_filtered/train'
+# 위 경로에 있는 Cats 폴더와 Dogs 폴더 내의 이미지 데이터를 자동으로 labeling을 하게 됨
+# class_mode : {'input', 'binary', 'categorical', 'sparse', None}
+train_generator = train_datagen.flow_from_directory(train_dir,
+                                                    target_size=(150, 150),
+                                                    class_mode='binary',
+                                                    batch_size=20)
+validation_generator = validation_datagen.flow_from_directory(validation_dir,
+                                                              target_size=(150, 150),
+                                                              class_mode='binary',
+                                                              batch_size=20)
+															  
+# verbose : 0 = silent, 1 = progress bar, 2 = one line per epoch
+# epochs : 1 epoch는 전체 데이터를 한 번 훑음을 뜻함
+# steps_per_epoch : 1 epoch마다 데이터를 몇 번 볼 것인지 설정
+# [train_generator.samples / epoch] = [주로 트레이닝 데이터의 수 / 배치 사이즈로 함]
+# model이 ImageDataGenerator일 경우 model.fit_generator method를 이용해 학습시킴
+# 그러나, fit method를 이용해서 학습이 됨
+history = model.fit(train_generator,
+                    validation_data = validation_generator,
+                    epochs = 100,
+                    steps_per_epoch = 100,
+                    validation_steps = 50,
+                    verbose = 2)
