@@ -1,0 +1,676 @@
+검색 항목 -----------------------------------------------------------
+
+DataFrame 특정 행 삭제 방법 / DataFrame 특정 행 또는 열의 Value 접근방법
+Gragh Tool(plotly, PyQt5) / range 메서드를 이용한 리스트 만들기
+
+import plotly.express as px
+px.bar / px.line 그래프 그리기
+
+Pandsas, Series와 DataFrame / 범주형 데이터 변환 / 비대칭 데이터 문제
+데이터 검증, panda DataFrame groupby/sample 함수 / Conv1D, Conv2D, Conv3D
+
+tensorflow 모델 저장 및 불러오기 / Git과 Github의 차이점 & 용어 정리
+지도학습 선형회귀의 개선 모델 Ridge와 Lasso / 
+
+
+sklearn module
+로지스틱 회귀(regression), 결정트리(Decision tree), 데이터 스케일링(scaler)
+K-최근접 이웃(KNeighbors), 배깅(bagging), Boosting Algorithm
+AdaBoost, GBM, lightGBM, CatBoost, GridSearchCV
+------------------------------------------------------------------
+
+
+** 주피터 노트북에서 GPU 사용하기 위한 설치 프로그램 **
+** 참고 사이트 **
+https://theorydb.github.io/dev/2020/02/14/dev-dl-setting-local-python/
+https://velog.io/@mactto3487/%EB%94%A5%EB%9F%AC%EB%8B%9D-GPU-%ED%99%98%EA%B2%BD-%EA%B5%AC%EC%84%B1%ED%95%98%EA%B8%B0
+
+
+** Tip **
+pickle : 데이터 압축 시 사용하기도 함
+
+
+
+reshape(1, -1) # -1 : 나머지 기준에 맞춘다
+막대 그래프에서 색을 리스트로 넣으면 각각 달라짐
+
+from matplotlib import font_manager, rc
+
+font_list = font_manager.findSystemFonts(fontpaths = None, fontext ='ttf')
+
+# Git과 Github의 차이점 & 용어 정리 -----------------------------------------------------
+
+Git : 로컬에서 관리되는 버전 관리 시스템 (VCS : Version Control System)
+ + 소스코드 수정에 따른 버전을 관리해주는 시스템
+ 
+Github : 클라우드 방식으로 관리되는 버전 관리 시스템(VCS)
+ + 자체 구축이 아닌 빌려쓰는 클라우드 개념
+ + 오픈소스는 일정 부분 무료로 저장 가능, 아닐 경우 유료 사용
+ 
+Github
+ - Issue : 프로젝트에서 개선되거나 해결되어야할 것을 의미
+ - Milestone : 프로젝트에서 주요한 이벤트를 표시하는 기준점이며, 프로젝트의 진척을 관찰하기 위해 사용
+	+ 프로젝트가 진행되는 동안 달성되어야 하는 특정한 목표
+	+ 예) 주요한 특정 기능의 추가, 버전 업 등이 될 수 있음
+	+ 목표 날짜를 설정 가능
+	+ 보통 릴리즈를 위해 사용됨
+
+커밋(Commit) : Git(로컬 저장소)에 파일을 추가하거나 변경 내용을 저장하는 작업
+푸쉬(Push) : Github(또는 원격 저장소)에 파일을 추가하거나 변경 내용을 저장하는 작업
+풀(Pull) : Github(또는 원격 저장소)에서 파일을 다운로드하는 작업
+클론(Clone) : Github(또는 원격 저장소)에서 파일을 다운로드(복사)하는 작업
+
+# DataFrame 특정 행 삭제 방법 ---------------------------------------------------------
+# '~' 기호 : 삭제의 의미
+df = df[~((df['id'] == id) & (df['pw'] == pw)) # 데이터프레임에서 id와 pw가 같은 data를 찾아서 삭제 후 변수에 저장
+self.userinfoAll = self.userinfoAll[~( (self.userinfoAll['id'] == id) & (self.userinfoAll['pw'] == pw))]
+
+# DataFrame 특정 행 또는 열의 Value 접근방법 ----------------------------------------------
+df['Name'].values[0] # value 값이 int, str 등의 type으로 출력됨 / np.array 타입 등이 아님
+print(type(df['Name'].values[0]))
+
+# Gragh Tool
+import plotly
+import plotly.figure_factory as ff
+import plotly.graph_objs as go
+import plotly.express as px
+
+# plotly templates 출력 -------------------------------
+import plotly.io as pio
+print(list(pio.templates))
+['ggplot2', 'seaborn', 'simple_white', 'plotly', 'plotly_white', 'plotly_dark', 'presentation'
+,'xgridoff', 'ygridoff', 'gridon', 'none']
+
+----------------------------------------------------------------
+fig = px.line(df, x='Time', y='Price', title='Yearly Sale Price', template="presentation",
+                    line_shape='spline', render_mode="auto")
+fig.show()
+(x/y : x/y축에 넣은 df 테이블의 column 명)
+line_shape : 'linear', 'spline', 'hv', 'vh', 'hvh', 'vhv' (설정 종류)
+----------------------------------------------------------------
+df = px.data.wind()
+fig = px.bar_polar(df, r="frequency", theta="Day",
+           color="strength", template="plotly_dark",
+           color_discrete_sequence= px.colors.sequential.Plasma_r)
+fig.show()
+----------------------------------------------------------------
+data = px.data.gapminder()
+data_canada = data[data.country == 'Canada']
+fig = px.bar(data_canada, x='year', y='pop',
+             hover_data=['lifeExp', 'gdpPercap'], color='lifeExp',
+             labels={'pop':'population of Canada'}, height=400)
+fig.show()
+
+# PyQt5 --------------------------------------------------------------------------
+from PyQt5.QtWidgets import QWidget, QApplication, QTableWidget, QTableWidgetItem
+from PyQt5.QtWidgets import QVBoxLayout, QHeaderView, QSizePolicy
+
+** 출력창 **
+def MakeOutputWindow(self, df):
+     df_rows = len(df)
+     df_columns = len(df.columns.to_list())
+     df_cols_names = df.columns.to_list()
+
+     # 모든 Data Type string으로 변환
+     df = df.applymap(str)
+
+     app = QApplication(sys.argv)
+     qwidget = QWidget()
+     qwidget.setWindowTitle("Best Sellers")  # 제목 설정
+     qwidget.resize(1676, 1000)  # Window 크기 설정
+     # qwidget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding )
+
+     layout = QVBoxLayout()
+
+     # Table Widget 생성 / 행열 설정
+     tableWidget = QTableWidget()
+     tableWidget.setColumnCount(df_columns)
+     tableWidget.setRowCount(df_rows)
+
+     # Add item in Table
+     for i in range(df_rows):
+         for x in range(df_columns):
+             tableWidget.setItem(i, x, QTableWidgetItem(df.values[i][x]))
+
+     # Set Size-Auto
+     tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
+
+     # Set Column's Labels
+     tableWidget.setHorizontalHeaderLabels(df_cols_names)
+
+     layout.addWidget(tableWidget)
+     qwidget.setLayout(layout)
+     qwidget.show()
+
+     app.exec_()
+
+
+# range 메서드를 이용한 리스트 만들기 ---------------------------------------------
+value = list(range(10)) # 1~9까지 리스트 형태로 만들어짐
+
+# Pandas.DataFrame.corr(method='')  ----------------------------------------
+상관계수(correlation coefficient)
+: 두 변수가 함께 변하는 정도를 -1 ~ 1 범위의 수로 나타낸 것
+
+method 종류 : pearson(default), kendall, spearman
+
+spearman : 상관분석을 실시함에 있어 서열척도를 사용한 변수가 포함되어 있거나
+등간/비율척도를 사용한 변수들이라 하더라도, 두 변수 간의 관계가 비선형적 일 때 구하는 상관계수
+
+kendall : spearman의 상관계수와 마찬가지로, 비선형적 관게이거나 서열변수일 때 사용
+spearman의 상관계수보다 믿을만 한 것으로 알려짐 (특히 표본이 작을 때)
+
+# Pandsas, Series와 DataFrame ----------------------------------------------
+Pandas Series : Series는 DataFrame의 하위 자료형
+1개의 열(column)이 Serie, 이 Serie가 다수 모여 데이터프레임을 형성
+
+Pandas DataFrame
+Dictionary -> DataFrame : Value가 List 형태여야 함
+안좋은 예시) dict_data = {'a':1,'b':2,'c':3}
+좋은 예시) dict_data = {'a':[1],'b':[2],'c':[3]}
+
+# 범주형 데이터 변환 ----------------------------------------------------------
+방법 1.
+df['column명'] = df['column명'].apply(lambda x: x.astype('category').cat.codes)
+** 설명 ** 
+apply() : 특정 column을 일괄적으로 변경할 때 사용
+Ex) df['column명'] = df['column명'].apply(함수명)
+astype('category') 강제 형변환
+(def =)lambda : column의 값에 내가 정해놓은 함수 return값을 일괄적으로 적용
+Ex) apply(lambda 입력값 : 리턴값(결과값))
+cat.categories : 카테고리 값 / cat.codes 자동으로 숫자형 리턴
+
+방법 2.
+from sklearn.preprocessing import LabelEncoder
+
+le = LabelEncoder()
+res = le.fit_transform(data['column명'])
+
+# 역변환
+le.inverse_transform(res)
+
+# column 생성 및 value 입력
+df['column생성명'] = res
+
+방법 3.
+# 원핫인코딩
+df['column명'] = data['column명'].astype('category') # str -> category
+# df['column명'] = df['column명'].astype('str') # category -> str 
+
+&& 차이점 확인해보기
+pd.get_dummies(df, columns=['column명']) # category type으로 변환 꼭 필요
+pd.get_dummies(df['column명'])
+
+# 비대칭 데이터 문제 ----------------------------------------------------------
+1. Over-Sampling(오버) : 소수 클래스 데이터를 증가
+	- from imblearn.over_sampling import SMOTE
+2. Under-Sampling(언더) : 다수 클래스 데이터에서 일부만 사용
+	- from imblearn.under_sampling import (찾아봐야함)
+3. Combining Over- and Under-Sampling(복합)
+** 참고 사이트 ** 
+https://datascienceschool.net/03%20machine%20learning/14.02%20%EB%B9%84%EB%8C%80%EC%B9%AD%20%EB%8D%B0%EC%9D%B4%ED%84%B0%20%EB%AC%B8%EC%A0%9C.html
+
+# 데이터 스케일링 ----------------------------------------------------------
+StandardScaler : 각 특성의 평균을 0, 분산을 1로 변경하여 특성의 스케일을 맞춤
+RobustScaler : 평균과 분산 대신에 중간 값과 사분위 값을 사용
+MinMaxScaler : 모든 특성이 0과 1 사이에 위치하도록 데이터를 변경
+Normalizer : 특성 벡터의 유클리디안 길이가 1이되도록 조정 ( 아래 참고 사이트에서 그림보는 것을 추천 )
+ - 길이가 1인 원 또는 구로 투영하는 것이고, 각도만이 중요할 때 적용
+
+from sklearn.preprocessing import StandardScaler
+
+scaler = StandardScaler()
+
+X_train_scaled = scaler.fit_transform(X_train)
+
+스케일된 X_train을 이후
+model.fit(X_train_scaled, y_train).score(X_test, y_test)
+fit X값에 넣어 학습시킴
+
+** 참고 사이트 **
+https://subinium.github.io/MLwithPython-3-3/
+
+# 로지스틱 회귀(모델링) ----------------------------------------------------------
+특징 : Sample이 특정 클래스에 속할 확률을 추정하는데 주로 사용
+예) 이메일이 스팸일 확률 등..
+from sklearn.linear_model import LogisticRegression
+
+logreg = LogisticRegression()
+
+logreg.fit(X_train,y_train).score(X_test, y_test)
+fit : 학습시키겠다. / score : 정확도 계산 (pu법)
+
+# 결정트리(모델링) ----------------------------------------------------------
+정의 :  if else를 자동으로 찾아내 예측을 위한 규칙을 만드는 알고리즘
+	or 데이터에 있는 규칙을 학습을 통해 자동으로 찾아내 트리 기반의 분류 규칙을 만드는 알고리즘
+	
+장점 : 쉽고 직관적 / 각 피처의 스케일링과 정규화 같은 전처리 작업의 영향도가 작음
+단점 : 규칙을 추가하며 서브트리를 만들어 나갈수록 모델이 복잡 -> 과적합에 빠지기 쉬움
+	-> 튜닝 필요
+
+from sklearn.tree import DecisionTreeClassifier
+
+tree = DecisionTreeClassifier()
+
+tree.fit(X_train,y_train).score(X_test, y_test)
+
+** 참고 사이트 ** 
+https://injo.tistory.com/15#Decision-Tree%EC%9D%98-%EA%B5%AC%EC%A1%B0
+
+# K-최근접 이웃(모델링) ----------------------------------------------------------
+from sklearn.neighbors import KNeighborsClassifier
+
+knn = KNeighborsClassifier()
+
+knn.fit(X_train,y_train).score(X_test, y_test)
+
+** 참고 사이트 ** 
+http://hleecaster.com/ml-knn-concept/
+
+# 다수결 분류(모델링) ----------------------------------------------------------
+1. Hard Voting Classifier
+: 여러 모델을 생성하고 그 성과(결과)를 비교함, 이 때 classifier의 결과들을 집계하여 
+	가장 많은 표를 얻는 클래스를 최종 예측값으로 정함
+2. Soft Voting Classifier
+:앙상블에 사용되는 모든 분류기가 클래스의 확률을 예측할 수 있을 때 사용
+	각 분류기의 예측을 평균 내어 확률이 가장 높은 클래스를 예측값으로 정함
+from sklearn.ensemble import VotingClassifier
+
+voting = VotingClassifier(
+    estimators = [('logreg', logreg), ('tree', tree), ('knn', knn)], # 3가지
+    voting = 'hard')
+
+voting.fit(X_train,y_train).score(X_test, y_test)
+
+** 참고 사이트 **
+https://nonmeyet.tistory.com/entry/Python-Voting-Classifiers%EB%8B%A4%EC%88%98%EA%B2%B0-%EB%B6%84%EB%A5%98%EC%9D%98-%EC%A0%95%EC%9D%98%EC%99%80-%EA%B5%AC%ED%98%84
+
+# 배깅(모델링) ----------------------------------------------------------
+배깅(bagging, bootstrap agrregating) : 훈련세트에서 중복을 허용하여 샘플링하는 방식
+페이스팅(pasting) : 훈련세트에서 중복을 허용하지 않고 샘플링하는 방식
+
+중복을 허용한 랜덤 샘플링으로 만든 훈련 세트(부트스트랩)를 사용하여 각 내부 모델을 다르게 학습
+(훈련 세트의 서브셋을 무작위로 구성하여 분류기를 각기 다르게 학습)
+
+from sklearn.ensemble import BaggingClassifier
+
+bagging = BaggingClassifier(base_estimator=KNeighborsClassifier(), random_state=0, n_estimators=200)
+bagging.fit(X_train, y_train).score(X_test, y_test)
+
+** 참고 사이트 **
+https://yganalyst.github.io/ml/ML_chap6-2/
+
+# Boosting Algorithm ------------------------------------------------------
+부스팅 알고리즘은 여러 개의 약한 학습기(weak learner)를 순차적으로 학습-예측하면서 잘못 예측한 
+데이터에 가중치를 부여해 오류를 개선해나가며 학습하는 방식
+
+** 종류 **
+AdaBoost, LPBoost, TotalBoost, BrownBoost, MadaBoost, 
+LogitBoost, Gradient Boosting Machine(GBM), lightGBM 등 많은 종류가 존재
+
+** 대표적인 종류 **
+AdaBoost, Gradient Boosting Machine(GBM), lightGBM, XGBoost, CatBoost
+
+** 차이점 ** 
+Boosting 기법들의 차이는 오분류된 데이터를 다음 라운드에서 어떻게 반영시킬건지의 차이
+
+** 참고 사이트 ** 
+https://injo.tistory.com/31
+
+# AdaBoost(모델링) ----------------------------------------------------------
+from sklearn.ensemble import AdaBoostClassifier # 많이 사용
+
+ada = AdaBoostClassifier(n_estimators=200, random_state=0)
+ada.fit(X_train, y_train).score(X_test, y_test)
+
+# GBM(모델링) ----------------------------------------------------------
+from sklearn.ensemble import GradientBoostingClassifier
+
+gbm = GradientBoostingClassifier(n_estimators=200, random_state=0)
+gbm.fit(X_train, y_train).score(X_test, y_test)
+
+# lightGBM(모델링) ----------------------------------------------------------
+from lightgbm import LGBMClassifier # 다른 알고리즘에 비해 최근에 나옴, 비교적 성능이 좋음
+
+lgb = LGBMClassifier(n_estimaotrs = 200, random_state=0) # 파라미터 설정에 따라 성능이 많이 달라짐
+lgb.fit(X_train, y_train).score(X_test, y_test)
+
+
+# 데이터 검증 ----------------------------------------------------------
+from sklearn.model_selection import cross_val_score # valudation 확인
+from sklearn.svm import SVC
+
+model = SVC() # 단순하게 빠름, 많이 쓰임
+scores = cross_val_score(model, X_train, y_train); scores
+
+** + 상세 옵션 ** 
+from sklearn.model_selection import cross_val_score # valudation 확인
+from sklearn.svm import SVC
+# 교차 검증 상세 옵션
+from sklearn.model_selection import KFold
+
+model = SVC() # 단순하게 빠름, 많이 쓰임
+
+kfold = KFold(n_splits=5, shuffle=True, random_state=0) # KFold 객체 생성
+scores = cross_val_score(model, X_train, y_train, cv=kfold)
+
+** 참고 사이트 **
+https://woolulu.tistory.com/70?category=780979
+    + 다양한 교차 검증 방법 또한 해당 참고 사이트의 다른 페이지에 기재 되어있음
+
+# panda DataFrame groupby 함수 -----------------------------------------
+groupby() 연산자를 사용하여 집단, 그룹별로 데이터를 집계, 요약하는 방법
+
+전체 데이터를 그룹 별로 나누고 (split), 각 그룹별로 집계함수를 적용(apply) 후, 
+그룹별 집계 결과를 하나로 합치는(combine) 단계를 거치게 됨
+[ Split -> Apply -> Combine ]
+
+집단별 크기 : grouped.size()
+집단별 합계 : grouped.sum()
+집단별 평균 : grouped.mean()
+
+** 참고 사이트 ** 
+https://rfriend.tistory.com/383 (이미지 참고하기)
+
+# panda DataFrame sample 함수 --------------------------------------------------
+DataFrame에서 랜덤으로 데이터를 뽑을 때 사용
+
+1. df.sample(n=5) : df에서 5개의 row를 랜덤으로 뽑음
+2. df.sample(frac=0.7) : n 대신 frac을 입력하면 전체 Row 데이터에서 70%의 데이터를 뽑음
+3. df.sample(frac=0.7).reset_index(drop=True)도 가능 : drop은 인덱스 열을 지움
+
+
+# CatBoost(모델링) --------------------------------------------------
+CatBoost : Categorical Boost
+
+Cardinality(카디널리티)는 전체 행에 대한 특정 컬럼의 중복 수치를 나타내는 지표
+
+중복도가 ‘낮으면’ 카디널리티가 ‘높다’ => 고유값이 많다
+중복도가 ‘높으면’ 카디널리티가 ‘낮다’ => 고유값이 적다
+
+** 참고 사이트 **
+https://dailyheumsi.tistory.com/136
+
+# GridSearchCV 모듈 ---------------------------------------------------
+사이킷런에서는 분류 알고리즘이나 회귀 알고리즘에 사용되는 하이퍼파라미터를 순차적으로 
+입력해 학습을 하고 측정을 하면서 가장 좋은 파라미터를 알려줌
+
+from sklearn.model_selection import GridSearchCV 살펴보기
+하이퍼 파라미터의 최적값을 찾아줌
+모든 경우의 수를 쓰기 때문에 시간이 많이 걸림
+
+** 참고 사이트 **
+https://teddylee777.github.io/scikit-learn/grid-search-%EB%A1%9C-hyperparameter%EC%B5%9C%EC%A0%81%ED%99%94
+
+머신러닝에서 문제점
+ordering principle
+
+생성파지콘볼루션신경망(GGCNN) 알아보기
+
+
+딥러닝 기반 객체인식 로봇 팔 제어 시스템
+https://scienceon.kisti.re.kr/commons/util/originalView.do?cn=CFKO201831342441269&oCn=NPAP12689376&dbt=CFKO&journal=NPRO00377596
+
+# Conv1D, Conv2D, Conv3D ---------------------------------------------------
+Dimension : 공간적인 측면을 기준으로 1D / 2D / 3D로 나뉨
+
+Conv1D : [1 Dimension] 자연어 처리 분야에서 주로 사용
+Conv2D : [2 Dimension] 이미지 처리 분야에서 주로 사용
+Conv3D : [3 Dimension] ??
+
+
+# tensorflow 모델 저장 및 불러오기 ---------------------------------------------------
+** 참고 사이트 **
+https://minimin2.tistory.com/105
+
+# from sklearn.feature_selection import SelectFromModel ------------------------
+select = SelectFromModel(RandomForestClassifier(), threshold=None)
+
+X_train_fs = select.fit(X_train, y_train).trainform(X_train)
+
+mask = select.get_support()
+
+
+# 지도학습 선형회귀의 개선 모델 Ridge와 Lasso ----------------------------------------
+선형회귀에서는 MSE, RMSE, MAE 등을 최소화하는 기울기(w), 절편(b)를 찾음
+
+Ridge와 Lasso는 오차값에 규제(Regulation) 항 또는 벌점(Penalty) 항을 추가하여,
+조금 더 단순화시킨 모델 또는 일반화시킨 모델을 만드는 방법이다.
+
+이러한 모델은 Training Set에서 Overfitting을 줄이고 Test Set에서 성능을 높인다.
+
+손실함수에서 각 모델은 각각 alpha와 w의 제곱항, 절대값을 추가한다. 이때, 이것을 규제라고 한다.
+그리고 alpha는 규제의 강도를 의미한다.
+Ridge는 '+a * (w^2)' - 규제
+Lasso는 '+a * |w|' - 규제
+
+두 모델 중 보통을 Ridge 회귀를 선호하지만 특성이 많고 그 중 일부분만 중요하다면 Lasso가 더 좋을 선택일 수 있다.
+scikit-learn은 Lasso와 Ridge의 패널티를 결합한 ElasticNet도 제공한다.
+실제로 이 조합은 최상의 성능을 내지만 L1규제와 L2규제를 위한 매개변수 두개를 조정해야한다.
+
+** 참고 사이트 **
+https://m.blog.naver.com/PostView.naver?isHttpsRedirect=true&blogId=ssdyka&logNo=221232820330
+
+
+# Optuna 모듈 ---------------------------------------------------------------
+import optuna
+from optuna import Trial 
+from optuna.samplers import TPESampler # 보통 공부할 때 많이 불러오는 모듈
+
+Optuna는 하이퍼 파라미터 최적화 Task를 도와주는 Framework임
+파라미터의 범위를 지정해주거나, 파라미터가 될 수 있는 목록을 설정하면 매 Trial마다 
+파라미터를 변경하면서 최적의 파라미터를 찾음
+
+** 참고 사이트 ** 
+https://ssoonidev.tistory.com/107
+
+# Pycaret 모듈 ---------------------------------------------------------------
+setup() 메서드 
+
+아래와 같은 방법으로 모델 생성 전 값을 초기화하는 부분임
+reg = setup(X_train, 
+            preprocess = False, # True로 설정되면, 자체적인 Feature Engineering을 추가로 진행해 Predict가 불가능해진다.
+            train_size = 0.999,  # 우리는 전체 데이터를 학습해 test를 예측하는게 목표이기 때문에, 0.999로 설정한다.
+            target = '등록차량수', # 목표 변수는 등록 차량 수 이다.
+            silent = True, # 엔터를 누르기 귀찮다. 궁금하면 풀어보세요
+            use_gpu = True, # GPU가 있으면 사용하세요 (Cat BOost 속도 향상)
+            numeric_features=list(X_train.drop(columns = ['등록차량수']).columns), # 모든 변수가 숫자로써의 의미가 있다.
+            session_id = 2021,
+            fold_shuffle = True
+            )
+
+compare_model() 메서드
+
+아래와 같은 방법으로 간단하게 사용하는 것부터 참조 사이트처럼 여러가지를 설정할 수 있다.
+top5 = compare_models(n_select = 5, sort = 'MAE') 
+
+** 참고 사이트 **
+https://leo-bb.tistory.com/62
+
+# pandas DataFrame assign 메서드 --------------------------------------
+import pandas as pd
+
+df = pd.DataFrame( {'Cost_Price': [100, 200], 
+					'Selling_Price': [200, 400]} )
+
+하나의 열 추가
+new_df=df.assign( Profit=df["Selling Price"]-df["Cost Price"] )
+new_df=df.assign( Profit=lambda x: x.Selling_Price-x.Cost_Price )
+
+여러 개의 열 추가
+new_df=df.assign( Cost_Price_Euro = df['Cost_Price']*1.11,  
+                  Selling_Price_Euro = df['Selling_Price']*1.11 )
+				  
+** 참고 사이트 ** 
+https://www.delftstack.com/ko/api/python-pandas/pandas-dataframe-dataframe.assign-function/
+
+# pandas DataFrame pivot 메서드 --------------------------------------
+Method Default Form
+df.pivot(index=None, columns=None, values=None) 
+
+일반적으로 사용할 때 groupby를 사용한 상태에서 쓰임
+그러나 groupby를 사용하지 않고 쓰는 방법도 있음(이때는 pivot_table 메서드를 사용)
+df.pivot(index='단지코드', columns='임대건물구분', values='counter')
+
+** 참고 사이트 **
+https://continuous-development.tistory.com/142
+
+# pandas DataFrame rename 메서드 --------------------------------------
+
+columns= dictionary 형태로 넣어줘야함
+df.rename( columns={'바꿀 기존 Column':'Rename할 Column Name', 
+					'바꿀 기존 Column2':'Rename할 Column Name2'} )
+
+
+# K-Fold와 Statified K-Fold 모듈 --------------------------------------
+
+train(학습) 데이터에서만 정확도가 높게 나오거나 손실함수 값이 낮게 나오는 것을 과정합(Overfitting)이라고 한다.
+이때 과적합을 방지하기 위해 분류 모델에서 k-fold 모듈을 사용한다. (회귀 모델에서는 찾아봐야한다.)
+
+k-fold 모듈을 사용하는 것은 곧 교차검증을 하는 것과 같다.
+(교차검증이 무엇인지, 자세한 궁금증은 참고 사이트를 확인하자)
+
+그러나 k-fold의 문제점이 있다.
+k-fold는 일정한 간격으로 잘라서 학습하고 검증하기 때문에 편향된 데이터에서는
+학습 데이터는 없고 검증 데이터에만 있는 문제가 발생한다. 
+
+이를 방지하기 위해 나온 것이 statifiedkfold 모듈이다.
+이 모듈은 분류 모델에서 학습 데이터와 target 데이터를 일정한 비율(k등분)로 가져가기 때문에
+학습과 검증 데이터가 편향된 데이터를 갖지 않는다. 
+
+target 데이터의 값을 보고 일정한 비율로 가져가기 때문에 target이 연속된 데이터인
+Regression(회귀[예측]) 모델에서는 사용하는 것이 적절하지 않다.
+
+굳이 회귀 모델에서 사용하자면 target 데이터를 n등분하여 수치형 catergory로 만들어서 사용할 수 있다.
+
+statifiedkfold를 k등분하여 학습할 때 k만큼의 결과 값이 나온다.
+예로, k=5로 나눴을 때 정확도, Loss 등이 5개가 나온다는 의미이다.
+
+** 참고 사이트 **
+https://continuous-development.tistory.com/166
+
+# Scaler QuantileTransformer와 PowerTransformer -----------------------------------------
+- QuantileTransformer -
+기본적으로 1000개 분위를 사용하여 데이터를 '균등분포' 시킴
+Robust처럼 이상치에 민감X, 0~1사이로 압축
+
+from sklearn.preprocessing import QuantileTransformer
+scaler = QuantileTransformer()
+
+
+- PowerTransformer -
+데이터의 특성별로 정규분포형태에 가깝도록 변환
+관련 교재에서 히스토그램을 그려서 확인 꼭 해보는게 좋다고 함 
+
+from sklearn.preprocessing import PowerTransformer
+scaler = PowerTransformer()
+
+
+** 참고 사이트 **
+https://m.blog.naver.com/PostView.naver?isHttpsRedirect=true&blogId=demian7607&logNo=222009975984
+
+
+# pandas crosstab -----------------------------------------
+파라미터 사용법 익혀보기
+
+
+## 자연어처리 
+# gensim --------------------------------------------------
+단어 단위로 분석할 때 사용
+문석, 단어, tfidm 구축할 때
+
+# pytorch 모듈 ---------------------------------------------
+텐서플로우는 그래프 기반이다. 내부에서 돌기 때문에 확인이 힘들다.
+반면, 중단점을 찍을 수 있어 문제 파악을 하기 쉽다. 때문에 디버깅하기 좋다
+
+# pytorch-lightning ------------------------------------
+keras 격의 모듈 - 편리하다
+
+# transformer 모듈 ------------------------------------------
+
+# LDA ------------------------------------------------------
+회의에서 사용한 단어를 모아 TOPIC 리스트를 보여줌(?) - 좀 더 알아보기
+
+# 분류성능평가지표 ---------------------------------------------
+
+** 참고 사이트 ** 
+https://sumniya.tistory.com/26
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
